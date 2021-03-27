@@ -102,6 +102,18 @@ class Page_view_form():
 			sqlighter.set_data(table_name = 'users', line = 'data', line_selector = f'user_id_{app_from}', line_selector_value = user_id, data = json.dumps(page_data))
 			return ImportFromStandart(page = 'menu')
 
+		# Нравится
+		if (data == 'like'):
+			answers_ = {'users': [{'user_token': '-', 'page': self.pageName, 'page_data': page_data, 'answers': []}]}
+			# Для текущего пользователя
+			user_1 = create_answer(app_from, user_id, self.pageName)['users'][0]
+			# Для того, кого лайкнули
+			user_token = sqlighter.get_data(table_name = 'users', line = 'user_token', line_selector = f'user_id_{app_from}', line_selector_value = user_id)
+			user_2 = {'user_token': page_data['data_page']['profile'], 'page': 'view_form_liked_me', 'page_data': {'profile': user_token}, 'answers': []}
+			
+			return {'users': [user_1, user_2]}
+
+		# Не нравится
 		if (data == 'dislike'):
 			return create_answer(app_from, user_id, self.pageName)
 

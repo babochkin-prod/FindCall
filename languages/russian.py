@@ -30,6 +30,9 @@ language = {
 				'menu': 'Меню'
 			}
 		},
+		'view_form_liked_me':{
+			'text': 'Кому-то понравилась ваша анкета'
+		},
 		'chats_list':{
 			'text': 'Список чатов',
 			'buttons': {

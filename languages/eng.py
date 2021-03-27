@@ -30,6 +30,9 @@ language = {
 				'menu': 'Menu'
 			}
 		},
+		'view_form_liked_me':{
+			'text': 'Someone liked your profile'
+		},
 		'chats_list':{
 			'text': 'Chats list',
 			'buttons': {

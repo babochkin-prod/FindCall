@@ -131,6 +131,48 @@ def create_new_user(conn, app_from: str, user_id: int):
 
 #=================================================================================================================
 
+#========================================= Список чатов =========================================
+
+@ensure_connection
+def init_db_chats(conn, force: bool = False):
+	cursor = conn.cursor()
+
+	if(force):
+		cursor.execute('DROP TABLE IF EXISTS chats')
+
+	cursor.execute('''
+		CREATE TABLE IF NOT EXISTS chats (
+			id 					INTEGER PRIMARY KEY,
+			from_user_token 	TEXT NOT NULL,
+			to_user_token 		TEXT NOT NULL
+		)
+	''')
+
+	# Сохранить изменения
+	conn.commit()
+
+# Создаёт новый чат
+@ensure_connection
+def create_new_chat(conn, from_user_token: str, to_user_token: str):
+	cursor = conn.cursor()
+	cursor.execute('''INSERT INTO chats (
+			from_user_token,
+			to_user_token) VALUES (?, ?)'''
+			,(from_user_token, to_user_token))
+
+# Список чатов
+@ensure_connection
+def chat_list(conn, from_user_token: str):
+	print(from_user_token)
+	cursor = conn.cursor()
+	print('--')
+	cursor.execute('''SELECT to_user_token FROM chats WHERE from_user_token = ?''', (from_user_token))
+	print('---')
+	(data, ) = cursor.fetchall()
+	return data
+
+#================================================================================================
+
 
 
 #===================================== FINDE RANDOM PROFILE =====================================
@@ -236,13 +278,11 @@ def delete_item(conn, table_name: str, line_selector: str, line_selector_value: 
 @ensure_connection
 def init_db(conn, force: bool = False):
 	init_db_users(force = force)
+	init_db_chats(force = force)
 
 
 
 if __name__ == '__main__':
 	print('Соединение с базой')
 	init_db_users(force = False)
-	#print(set_user_page(user_id = 123, page = 'page_new_2'))
-	#print(set_user_page(user_id = 1234, page = 'page_new_3'))
-
-	#print(get_user_page(user_id = 1235))
+	init_db_chats(force = False)
