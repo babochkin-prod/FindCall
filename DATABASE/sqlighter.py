@@ -174,6 +174,54 @@ def chat_list(conn, from_user_token: str):
 #================================================================================================
 
 
+#========================================= Сообщения =========================================
+
+@ensure_connection
+def init_db_messages(conn, force: bool = False):
+	cursor = conn.cursor()
+
+	if(force):
+		cursor.execute('DROP TABLE IF EXISTS messages')
+
+	cursor.execute('''
+		CREATE TABLE IF NOT EXISTS messages (
+			id 					INTEGER PRIMARY KEY,
+			from_user_token 	TEXT NOT NULL,
+			to_user_token 		TEXT NOT NULL,
+			message 			TEXT NOT NULL
+		)
+	''')
+
+	# Сохранить изменения
+	conn.commit()
+
+# Создаёт сообщение
+@ensure_connection
+def send_message(conn, from_user_token: str, to_user_token: str, message: str):
+	cursor = conn.cursor()
+	cursor.execute('''INSERT INTO messages (
+			from_user_token,
+			to_user_token, message) VALUES (?, ?, ?)'''
+			,(from_user_token, to_user_token, message))
+
+
+# Список сообщений
+@ensure_connection
+def messages_list(conn, from_user_token: str, to_user_token: str):
+	cursor = conn.cursor()
+	cursor.execute('''SELECT message FROM messages WHERE (from_user_token = ? and to_user_token = ?)''', (from_user_token, to_user_token))
+	data = cursor.fetchall()
+	return data
+
+# Список сообщений
+@ensure_connection
+def delete_messages_list(conn, from_user_token: str, to_user_token: str):
+	cursor = conn.cursor()
+	cursor.execute('''DELETE FROM messages WHERE (from_user_token = ? and to_user_token = ?)''', (from_user_token, to_user_token))
+
+#================================================================================================
+
+
 
 #===================================== FINDE RANDOM PROFILE =====================================
 @ensure_connection
@@ -279,6 +327,7 @@ def delete_item(conn, table_name: str, line_selector: str, line_selector_value: 
 def init_db(conn, force: bool = False):
 	init_db_users(force = force)
 	init_db_chats(force = force)
+	init_db_messages(force = force)
 
 
 

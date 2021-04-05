@@ -68,6 +68,11 @@ class Page_chats_list():
 		if (data == 'menu'):
 			return ImportFromStandart(page = 'menu')
 
+		if (data[:5] == 'chat_'):
+			profile = data[5:]
+			user = {'user_token': '-', 'page': 'chat', 'page_data': {'profile': profile}, 'answers': []}
+			return {'users': [user]}
+
 		return '-'
 	#Формирует ответ бота
 	def Ansver(self, app_from, user_id):
